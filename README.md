@@ -88,5 +88,4 @@ The `mcp` service waits for `app` to be healthy before starting.
 | `DJANGO_SUPERUSER_EMAIL` | No | GM admin email (default: `admin@localhost`) |
 | `ALLOWED_HOSTS` | No | Comma-separated hosts/IPs (default: `localhost,127.0.0.1`) |
 | `ANTHROPIC_API_KEY` | No | Required for JANUS AI terminal |
-| `OBSIDIAN_VAULT_PATH` | No | Path to Obsidian vault for campaign lore |
 | `DEBUG` | No | Set `True` only for troubleshooting (default: `False`) |
