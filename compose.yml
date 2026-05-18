@@ -1,0 +1,52 @@
+# JANUS — Sci-Fi Campaign Console
+# Homelab deployment — pulls pre-built image from GHCR.
+# Source: https://github.com/icariumtech/janus-console
+#
+# First-time setup:
+#   cp .env.example .env        # fill in SECRET_KEY and DJANGO_SUPERUSER_PASSWORD
+#   touch db.sqlite3            # prevent Docker creating this as a directory
+#   docker compose pull
+#   docker compose up -d
+
+services:
+  app:
+    image: ghcr.io/icariumtech/janus-console:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./db.sqlite3:/app/db.sqlite3
+    environment:
+      SECRET_KEY: "${SECRET_KEY}"
+      DEBUG: "${DEBUG:-False}"
+      ALLOWED_HOSTS: "${ALLOWED_HOSTS:-localhost,127.0.0.1}"
+      ANTHROPIC_API_KEY: "${ANTHROPIC_API_KEY:-}"
+      DJANGO_SUPERUSER_USERNAME: "${DJANGO_SUPERUSER_USERNAME:-admin}"
+      DJANGO_SUPERUSER_PASSWORD: "${DJANGO_SUPERUSER_PASSWORD}"
+      DJANGO_SUPERUSER_EMAIL: "${DJANGO_SUPERUSER_EMAIL:-admin@localhost}"
+      OBSIDIAN_VAULT_PATH: "${OBSIDIAN_VAULT_PATH:-}"
+      DATA_DIR: "/app/data"
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/active-view/')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+
+  mcp:
+    image: ghcr.io/icariumtech/janus-console:latest
+    command: ["python", "mcp_server.py"]
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./data:/app/data
+      - ./db.sqlite3:/app/db.sqlite3
+    environment:
+      SECRET_KEY: "${SECRET_KEY}"
+      DEBUG: "${DEBUG:-False}"
+      DATA_DIR: "/app/data"
+    depends_on:
+      app:
+        condition: service_healthy
+    restart: unless-stopped
