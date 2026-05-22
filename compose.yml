@@ -16,6 +16,7 @@ services:
     volumes:
       - ./data:/app/data
       - ./db.sqlite3:/app/db.sqlite3
+      - ./var:/app/var
     environment:
       SECRET_KEY: "${SECRET_KEY}"
       DEBUG: "False"
