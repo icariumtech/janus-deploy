@@ -47,6 +47,7 @@ services:
       SECRET_KEY: "${SECRET_KEY}"
       DEBUG: "False"
       DATA_DIR: "/app/data"
+      JANUS_EXTERNAL_URL: "${JANUS_EXTERNAL_URL:-}"
     depends_on:
       app:
         condition: service_healthy
